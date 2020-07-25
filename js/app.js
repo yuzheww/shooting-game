@@ -56,6 +56,7 @@ KeyBoard.prototype = {
   pressedUp: false,
   heldLeft: false,
   heldRight: false,
+  heldSpace: false,
   pressedSpace: false,
   pressedEnter: false,
   keydown: function (e) {
@@ -89,6 +90,7 @@ KeyBoard.prototype = {
     switch (key) {
       case 32:
         this.pressedSpace = false;
+        this.heldSpace = false;
         break;
       case 37:
         this.heldLeft = false;
@@ -355,8 +357,8 @@ var GAME = {
     });
   },
   renderLevel: function () {
-    levelText.innerText = '当前Level：' + this.opts.level;
-    nextLevelText.innerText = '下一Level：' + (this.opts.level + 1);
+    levelText.innerText = ' Current Level：' + this.opts.level;
+    nextLevelText.innerText = 'Next Level：' + (this.opts.level + 1);
   },
   renderScore: function () {
     scoreText.innerText = this.score;
