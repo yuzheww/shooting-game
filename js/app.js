@@ -319,32 +319,33 @@ var GAME = {
     }
   },
   //生成敌人
-  createEnemy: function (enemyType) {
+  createEnemy: function(enemyType) {
     var opts = this.opts;
-    var level = opts.level;
+    var level = opts.level / 2;
+    var numOfLines = opts.level / 2;
     var enemies = this.enemies;
-    var numPerLine = opts.numPerLine;
+    var numPerLine = opts.numPerLine + level * 0.5;
     var padding = opts.canvasPadding;
     var gap = opts.enemyGap;
-    var size = opts.enemySize;
-    var speed = opts.enemySpeed;
+    var size = opts.enemySize - level * 2;
+    var speed = opts.enemySpeed + level * 0.1;
     //每升级一关敌人增加一行
-    for (var i = 0; i < level; i++) {
-      for (var j = 0; j < numPerLine; j++) {
-        var initOpt = {
-          x: padding + j * (size + gap),
-          y: padding + i * (size + gap),
-          size: size,
-          speed: speed,
-          status: enemyType,
-          enemyIcon: opts.enemyIcon,
-          enemyBoomIcon: opts.enemyBoomIcon
-        };
-        enemies.push(new Enemy(initOpt));
-      }
+    for (var i = 0; i < numOfLines; i++) {
+        for (var j = 0; j < numPerLine; j++) {
+            var initOpt = {
+                x: padding + j * (size + gap),
+                y: padding + i * (size + gap),
+                size: size,
+                speed: speed,
+                status: enemyType,
+                enemyIcon: opts.enemyIcon,
+                enemyBoomIcon: opts.enemyBoomIcon
+            };
+            enemies.push(new Enemy(initOpt));
+        }
     }
     return enemies;
-  },
+},
   draw: function () {
     this.renderScore();
     this.plane.draw();
