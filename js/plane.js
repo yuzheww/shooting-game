@@ -1,5 +1,5 @@
 /*飞机*/
-var Plane = function (opts) {
+var Plane = function(opts) {
     this.opts = opts || {};
     //console.log('Enemy opts',opts);
     //调用父类方法
@@ -12,6 +12,9 @@ var Plane = function (opts) {
     this.planeIcon = opts.planeIcon;
     this.minX = opts.minX;
     this.maxX = opts.maxX;
+    //Y坐标
+    this.minY = opts.minY;
+    this.maxY = opts.maxY;
     //子弹相关
     this.bullets = [];
     this.bulletSpeed = opts.bulletSpeed || CONFIG.bulletSpeed;
@@ -21,7 +24,7 @@ var Plane = function (opts) {
 inheritPrototype(Plane, Element);
 
 //方法：子弹击中目标
-Plane.prototype.hasHit = function (enemy) {
+Plane.prototype.hasHit = function(enemy) {
     var bullets = this.bullets;
     //console.log(bullets);
     //console.log(enemy);
@@ -37,8 +40,9 @@ Plane.prototype.hasHit = function (enemy) {
     return false;
 };
 
+
 //方法：绘制飞机
-Plane.prototype.draw = function () {
+Plane.prototype.draw = function() {
     this.drawBullets();
     var planeIcon = new Image();
     planeIcon.src = this.planeIcon;
@@ -46,23 +50,38 @@ Plane.prototype.draw = function () {
     return this;
 };
 //方法：飞机方向
-Plane.prototype.direction = function (direction) {
+Plane.prototype.direction = function(direction) {
     var speed = this.speed;
     var planeSpeed;
     if (direction === 'left') {
         planeSpeed = this.x < this.minX ? 0 : -speed;
-    } else {
+        this.move(planeSpeed, 0);
+    } else if (direction === 'right') {
         planeSpeed = this.x > this.maxX ? 0 : speed;
+        this.move(planeSpeed, 0);
+    } else if (direction === 'up') {
+        planeSpeed = this.y < this.minY ? 0 : -speed;
+        this.move(0, planeSpeed);
+    } else {
+        planeSpeed = this.y > this.maxY ? 0 : speed;
+        this.move(0, planeSpeed);
     }
-    console.log('planeSpeed:', planeSpeed);
-    console.log('this.x:', this.x);
-    console.log('this.minX:', this.minX);
-    console.log('this.maxX:', this.maxX);
-    this.move(planeSpeed, 0);
-    return this;//方便链式调用
+    return this; //方便链式调用
+    // 仅限左右飞行
+    // if (direction === 'left') {
+    //     planeSpeed = this.x < this.minX ? 0 : -speed;
+    // } else {
+    //     planeSpeed = this.x > this.maxX ? 0 : speed;
+    // }
+    // console.log('planeSpeed:', planeSpeed);
+    // console.log('this.x:', this.x);
+    // console.log('this.minX:', this.minX);
+    // console.log('this.maxX:', this.maxX);
+    // this.move(planeSpeed, 0);
+    // return this; //方便链式调用
 };
 //方法：发射子弹
-Plane.prototype.shoot = function () {
+Plane.prototype.shoot = function() {
     var bulletPosX = this.x + this.width / 2;
     //console.log(bulletPosX);
     this.bullets.push(new Bullet({
@@ -75,7 +94,7 @@ Plane.prototype.shoot = function () {
     return this;
 };
 //方法：绘制子弹
-Plane.prototype.drawBullets = function () {
+Plane.prototype.drawBullets = function() {
     var bullets = this.bullets;
     //console.log(bullets);
     var i = bullets.length;
