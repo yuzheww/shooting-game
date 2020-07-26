@@ -54,9 +54,12 @@ KeyBoard.prototype = {
   pressedLeft: false,
   pressedRight: false,
   pressedUp: false,
+  pressedDown: false,
   heldLeft: false,
   heldRight: false,
   heldSpace: false,
+  heldUp: false,
+  heldDown: false,
   pressedSpace: false,
   pressedEnter: false,
   keydown: function (e) {
@@ -70,15 +73,40 @@ KeyBoard.prototype = {
         this.heldLeft = true;
         this.pressedRight = false;
         this.heldRight = false;
+        this.pressedUp = false;
+        this.heldUp = false;
+        this.pressedDown = false;
+        this.heldDown = false;
         break;
-      case 38://上方向键-发射子弹
+      case 38://上方向键
+        this.pressedLeft = false;
+        this.heldLeft = false;
+        this.pressedRight = false;
+        this.heldRight = false;
         this.pressedUp = true;
+        this.heldUp = true;
+        this.pressedDown = false;
+        this.heldDown = false;
         break;
       case 39://右方向键
         this.pressedLeft = false;
         this.heldLeft = false;
         this.pressedRight = true;
         this.heldRight = true;
+        this.pressedUp = false;
+        this.heldUp = false;
+        this.pressedDown = false;
+        this.heldDown = false;
+        break;
+      case 40: //下方向键
+        this.pressedLeft = false;
+        this.heldLeft = false;
+        this.pressedRight = false;
+        this.heldRight = false;
+        this.pressedUp = false;
+        this.heldUp = false;
+        this.pressedDown = true;
+        this.heldDown = true;
         break;
       case 13://回车键-暂停游戏
         this.pressedEnter = true;
@@ -96,11 +124,16 @@ KeyBoard.prototype = {
         this.heldLeft = false;
         this.pressedLeft = false;
       case 38:
+        this.heldUp = false;
         this.pressedUp = false;
         break;
       case 39:
         this.heldRight = false;
         this.pressedRight = false;
+        break;
+      case 40:
+        this.heldDown = false;
+        this.pressedDown = false;
         break;
       case 13:
         this.pressedEnter = false;
@@ -249,9 +282,9 @@ var GAME = {
 
     //不断循环updateElement
     requestAnimationFrame(function () {
-      if(self.status === 'stop'){
+      if (self.status === 'stop') {
         return;
-      }else{
+      } else {
         self.updateElement();
         rAF(loop);//计算FPS值
       }
@@ -270,9 +303,16 @@ var GAME = {
     if (keyBoard.pressedRight || keyBoard.heldRight) {
       plane.direction('right');
     }
-    if (keyBoard.pressedUp || keyBoard.pressedSpace) {
-      keyBoard.pressedUp = false;
+    // Up and Down*
+    if (keyBoard.pressedUp || keyBoard.heldUp) {
+      plane.direction('up');
+    }
+    if (keyBoard.pressedDown || keyBoard.heldDown) {
+      plane.direction('down');
+    }
+    if (keyBoard.pressedSpace && !keyBoard.heldSpace) {
       keyBoard.pressedSpace = false;
+      keyBoard.heldSpace = true;
       plane.shoot();
     }
   },
@@ -321,7 +361,7 @@ var GAME = {
     }
   },
   //生成敌人
-  createEnemy: function(enemyType) {
+  createEnemy: function (enemyType) {
     var opts = this.opts;
     var level = opts.level / 2;
     var numOfLines = opts.level / 2;
@@ -333,21 +373,21 @@ var GAME = {
     var speed = opts.enemySpeed + level * 0.1;
     //每升级一关敌人增加一行
     for (var i = 0; i < numOfLines; i++) {
-        for (var j = 0; j < numPerLine; j++) {
-            var initOpt = {
-                x: padding + j * (size + gap),
-                y: padding + i * (size + gap),
-                size: size,
-                speed: speed,
-                status: enemyType,
-                enemyIcon: opts.enemyIcon,
-                enemyBoomIcon: opts.enemyBoomIcon
-            };
-            enemies.push(new Enemy(initOpt));
-        }
+      for (var j = 0; j < numPerLine; j++) {
+        var initOpt = {
+          x: padding + j * (size + gap),
+          y: padding + i * (size + gap),
+          size: size,
+          speed: speed,
+          status: enemyType,
+          enemyIcon: opts.enemyIcon,
+          enemyBoomIcon: opts.enemyBoomIcon
+        };
+        enemies.push(new Enemy(initOpt));
+      }
     }
     return enemies;
-},
+  },
   draw: function () {
     this.renderScore();
     this.plane.draw();
